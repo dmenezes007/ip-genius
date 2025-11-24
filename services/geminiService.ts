@@ -30,7 +30,7 @@ export const generateLessonPlan = async (
       Your task is to create a comprehensive Lesson Plan for the specified education level and topic.
       Level: ${level}.
       
-      You MUST structure the response in valid JSON format ONLY, without any markdown code blocks (e.g., ```json).
+      You MUST structure the response in valid JSON format ONLY, without any markdown code blocks (e.g., \`\`\`json).
       The JSON object must strictly adhere to the following structure:
       {
         "title": "A Creative and Engaging Title for the Lesson",
