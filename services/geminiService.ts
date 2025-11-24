@@ -3,7 +3,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/genai";
 import { EducationLevel, LessonPlan } from "../types";
 import { getDocumentsContext } from "../src/docsContext";
 
