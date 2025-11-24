@@ -5,7 +5,7 @@
 */
 import { GoogleGenerativeAI } from "@google/genai";
 import { EducationLevel, LessonPlan } from "../types";
-import { getDocumentsContext } from "../src/docsContext";
+import { getDocumentsContext } from "@/src/docsContext";
 
 const getAi = () => {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
