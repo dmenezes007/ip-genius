@@ -41,7 +41,7 @@ const ProfessorHome: React.FC = () => {
     <div>
       <div className="p-8 mb-8 text-white bg-blue-600 rounded-2xl shadow-xl animate-fade-in-up">
         <div className="flex flex-col md:flex-row items-center gap-6">
-            <img src={MasterPi} alt="Master PI" className="w-40 h-40 object-contain" />
+            <img src={MasterPi} alt="Master PI" style={{ maxHeight: '160px' }} />
             <div>
                 <h1 className="text-4xl font-extrabold">{introducao.title}</h1>
                 <p className="mt-2 text-lg text-blue-100 max-w-3xl">{introducao.mission}</p>

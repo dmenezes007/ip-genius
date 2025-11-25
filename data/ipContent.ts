@@ -6,7 +6,8 @@ export const LEVELS: Record<EducationLevel, string> = {
   'Infantil': 'Educação Infantil',
   'Fundamental_I': 'Ensino Fundamental - Anos Iniciais',
   'Fundamental_II': 'Ensino Fundamental - Anos Finais',
-  'Medio': 'Ensino Médio'
+  'Medio': 'Ensino Médio',
+  'Superior': 'Ensino Superior'
 };
 
 export const CHARACTERS = [

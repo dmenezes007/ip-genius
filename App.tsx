@@ -62,13 +62,13 @@ const App: React.FC = () => {
     }
     if (role === 'Student') {
       switch (activeModule) {
-        case 'home': return <EstudanteHome />;
+        case 'home': return <EstudanteHome level={level!} />;
         case 'conceitos': return <EstudanteConceitos />;
         case 'jogos': return <EstudanteJogos />;
         case 'inovadores': return <EstudanteInovadores />;
         case 'masterpi': return <EstudanteMasterPI level={level!} />;
         case 'imagegen': return <EstudanteImageGen />;
-        default: return <EstudanteHome />;
+        default: return <EstudanteHome level={level!} />;
       }
     }
     return null;

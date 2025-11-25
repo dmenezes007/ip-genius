@@ -3,7 +3,7 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
 */
-export type EducationLevel = 'Infantil' | 'Fundamental_I' | 'Fundamental_II' | 'Medio';
+export type EducationLevel = 'Infantil' | 'Fundamental_I' | 'Fundamental_II' | 'Medio' | 'Superior';
 export type UserRole = 'Teacher' | 'Student';
 
 export type AspectRatio = '16:9' | '1:1';
