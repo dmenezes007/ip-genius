@@ -39,8 +39,21 @@ const EstudanteMasterPI: React.FC<EstudanteMasterPIProps> = ({ level }) => {
             const aiMessage: Message = { sender: 'ai', text: aiResponse };
             setMessages(prev => [...prev, aiMessage]);
         } catch (e: any) {
-            setError('Ocorreu um erro ao falar com o Master PI. Tente novamente.');
-            console.error(e);
+            console.error("Gemini API call failed:", e);
+            let errorMessage = "Ocorreu um erro ao falar com o Master PI. Tente novamente.";
+            const errorText = e.toString().toLowerCase();
+
+            if (errorText.includes('api key not valid')) {
+                errorMessage = "Sua chave de API parece ser inválida. Verifique o arquivo .env.local.";
+            } else if (errorText.includes('permission denied') || errorText.includes('403')) {
+                errorMessage = "Permissão negada. A API Gemini pode não estar ativada no seu projeto Google Cloud.";
+            } else if (errorText.includes('billing') || errorText.includes('billable')) {
+                errorMessage = "Parece haver um problema de faturamento com sua chave. Verifique seu projeto no Google Cloud.";
+            } else if (errorText.includes('quota')) {
+                errorMessage = "Você excedeu sua cota de uso da API. Verifique seus limites e plano de faturamento.";
+            }
+            
+            setError(`${errorMessage} (Para mais detalhes, verifique o console do navegador)`);
         } finally {
             setIsLoading(false);
         }

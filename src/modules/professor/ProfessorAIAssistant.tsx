@@ -32,8 +32,21 @@ const ProfessorAIAssistant: React.FC<ProfessorAIAssistantProps> = ({ level }) =>
             const aiMessage: Message = { sender: 'ai', text: aiResponse };
             setMessages(prev => [...prev, aiMessage]);
         } catch (e: any) {
-            setError('Ocorreu um erro ao contatar o assistente de IA. Por favor, tente novamente.');
-            console.error(e);
+            console.error("Gemini API call failed:", e);
+            let errorMessage = "Ocorreu um erro ao contatar o assistente de IA. Por favor, tente novamente.";
+            const errorText = e.toString().toLowerCase();
+
+            if (errorText.includes('api key not valid')) {
+                errorMessage = "Chave de API inválida. Verifique o arquivo .env.local.";
+            } else if (errorText.includes('permission denied') || errorText.includes('403')) {
+                errorMessage = "Permissão negada. Verifique se a API Gemini está ativada no seu projeto Google Cloud.";
+            } else if (errorText.includes('billing') || errorText.includes('billable')) {
+                errorMessage = "Problema de faturamento. Verifique se o faturamento está ativo para seu projeto no Google Cloud.";
+            } else if (errorText.includes('quota')) {
+                errorMessage = "Cota de uso da API excedida. Por favor, verifique seu plano e limites de uso.";
+            }
+            
+            setError(`${errorMessage} (Detalhes no console)`);
         } finally {
             setIsLoading(false);
         }
