@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { EducationLevel, UserRole, LessonPlan } from './types';
-import { generateLessonPlan, askMasterPI, generateInventionImage } from './services/geminiService';
+import { generateLessonPlan, askMasterPI } from './services/geminiService';
 import IntroScreen from './components/IntroScreen';
 import ApiKeyModal from './components/ApiKeyModal';
 import LevelSelection from './components/LevelSelection';
@@ -18,8 +18,7 @@ const App: React.FC = () => {
   const [generatedPlan, setGeneratedPlan] = useState<LessonPlan | null>(null);
   const [chatResponse, setChatResponse] = useState<string>('');
   const [chatInput, setChatInput] = useState('');
-  const [imagePrompt, setImagePrompt] = useState('');
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+
   const [error, setError] = useState<string | null>(null);
 
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -56,22 +55,6 @@ const App: React.FC = () => {
     }
   };
 
-  const handleImageGen = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!imagePrompt.trim()) return;
-    setIsLoading(true);
-    setGeneratedImage(null);
-    setError(null);
-    try {
-      const img = await generateInventionImage(imagePrompt);
-      setGeneratedImage(img);
-    } catch (e: any) {
-       handleError(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleError = (err: any) => {
       console.error("An error occurred while calling the Gemini API:", JSON.stringify(err, null, 2));
 
@@ -102,7 +85,7 @@ const App: React.FC = () => {
     setActiveTab('home');
     setGeneratedPlan(null);
     setChatResponse('');
-    setGeneratedImage(null);
+
     setError(null);
   };
 

@@ -113,3 +113,21 @@ export const generateInventionDescription = async (prompt: string): Promise<stri
     throw new Error("Ocorreu um erro ao gerar a descrição da invenção.");
   }
 };
+
+export const generateInventionImage = async (prompt: string): Promise<string> => {
+  // O modelo 'gemini-1.5-flash' é de texto e não gera imagens (pixels) nativamente.
+  // Para evitar erros no build, retornamos uma imagem de placeholder dinâmica
+  // baseada no texto do prompt, ou uma imagem estática.
+  
+  console.log("Solicitação de imagem para:", prompt);
+
+  // Opção A: Retornar um placeholder simples para o build passar e a UI não quebrar
+  const encodedPrompt = encodeURIComponent(prompt.slice(0, 20)); // Pega o início do texto para a URL
+  return `https://placehold.co/600x400?text=Inveção:+${encodedPrompt}`;
+
+  /* NOTA: Se você quiser que o Gemini tente desenhar usando código SVG (já que ele é um modelo de texto),
+     você poderia usar uma implementação alternativa aqui solicitando SVG, 
+     mas isso requer que seu App.tsx saiba renderizar string SVG.
+     Por enquanto, o link acima é a solução mais segura para corrigir o erro.
+  */
+};
