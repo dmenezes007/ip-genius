@@ -24,7 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children, sidebarItems, onLogoClick, ro
       {/* Sidebar */}
       <aside
         className={`bg-white text-gray-800 transition-all duration-300 ease-in-out ${
-          isSidebarOpen ? 'w-64' : 'w-20'
+          isSidebarOpen ? 'w-72' : 'w-20'
         }`}
       >
         <div className="flex items-center justify-between h-16 p-4 border-b">
