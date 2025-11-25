@@ -58,13 +58,14 @@ export const SidebarItem: React.FC<{
     <li
       onClick={onClick}
       className={`
-        relative flex items-center py-3 px-6 my-1 font-medium rounded-md cursor-pointer
+        relative flex items-center py-3 px-6 my-2 font-medium rounded-md cursor-pointer
         transition-colors group
         ${
           active
             ? 'bg-gradient-to-tr from-blue-200 to-blue-100 text-blue-800'
             : 'hover:bg-gray-100 text-gray-600'
         }
+        ${!isOpen && 'justify-center'}
     `}
     >
       {icon}

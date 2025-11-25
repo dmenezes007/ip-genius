@@ -1,6 +1,7 @@
 import React from 'react';
 import { professorContent } from '../../../src/content/professorContent';
 import { Paintbrush, Shield, Cpu, Leaf, Briefcase, FlaskConical } from 'lucide-react';
+import MasterPi from '../../../imgs/Master PI.png';
 
 const Card: React.FC<{
   icon: React.ReactNode;
@@ -39,8 +40,13 @@ const ProfessorHome: React.FC = () => {
   return (
     <div>
       <div className="p-8 mb-8 text-white bg-blue-600 rounded-2xl shadow-xl animate-fade-in-up">
-        <h1 className="text-4xl font-extrabold">{introducao.title}</h1>
-        <p className="mt-2 text-lg text-blue-100 max-w-3xl">{introducao.mission}</p>
+        <div className="flex flex-col md:flex-row items-center gap-6">
+            <img src={MasterPi} alt="Master PI" className="w-40 h-40 object-contain" />
+            <div>
+                <h1 className="text-4xl font-extrabold">{introducao.title}</h1>
+                <p className="mt-2 text-lg text-blue-100 max-w-3xl">{introducao.mission}</p>
+            </div>
+        </div>
       </div>
 
       <h2 className="mb-6 text-3xl font-bold text-gray-800 animate-fade-in-up" style={{animationDelay: '100ms'}}>Categorias Transversais do Programa</h2>

@@ -55,7 +55,6 @@ export const estudanteContent: EstudanteContent = {
     title: "A Turma do PI",
     description: "Nossos heróis te guiarão na jornada da Propriedade Intelectual. Cada um representa uma parte importante desse universo:",
     personagens: [
-      { name: "Master PI", role: "O mentor sábio, que conhece todos os segredos da PI." },
       { name: "Sr. Criativo", role: "Adora uma novidade e está sempre pensando em novas invenções e obras de arte." },
       { name: "Cid PI", role: "O guardião da cidadania, ensinando sobre o respeito às criações e o combate à pirataria." },
       { name: "Capitã Tech", role: "Focada em tecnologia e como as inovações científicas podem mudar o mundo." },
