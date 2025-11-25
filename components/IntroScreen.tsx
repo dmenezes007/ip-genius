@@ -35,7 +35,7 @@ const IntroScreen: React.FC<IntroScreenProps> = ({ onComplete }) => {
           IP <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-cyan-400">Genius</span>
         </h1>
         <p className="text-slate-300 text-lg md:text-xl font-medium tracking-wide mb-12 max-w-lg text-center leading-relaxed">
-          Programa de Propriedade Intelectual nas Escolas
+          Scale Up do Programa PI nas Escolas
         </p>
 
         <button 
