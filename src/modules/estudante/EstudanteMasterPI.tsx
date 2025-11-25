@@ -62,7 +62,7 @@ const EstudanteMasterPI: React.FC<EstudanteMasterPIProps> = ({ level }) => {
     return (
         <div className="flex flex-col h-[80vh] bg-white rounded-2xl shadow-lg">
             <header className="p-6 border-b flex items-center gap-4">
-                <img src={MasterPi} alt="Master PI" className="w-16 h-16 rounded-full shadow-md"/>
+                <img src={MasterPi} alt="Master PI" style={{ maxHeight: '80px' }} />
                 <div>
                     <h1 className="text-2xl font-bold text-gray-800">Converse com o Master PI</h1>
                     <p className="mt-1 text-gray-500">Tire suas dúvidas sobre o mundo da inovação!</p>
@@ -72,7 +72,7 @@ const EstudanteMasterPI: React.FC<EstudanteMasterPIProps> = ({ level }) => {
             <div className="flex-1 p-6 overflow-y-auto space-y-6">
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex items-end gap-3 ${msg.sender === 'user' ? 'justify-end' : ''}`}>
-                        {msg.sender === 'ai' && <img src={MasterPi} className="w-8 h-8 rounded-full flex-shrink-0"/>}
+                        {msg.sender === 'ai' && <img src={MasterPi} style={{ height: '32px' }} className="flex-shrink-0"/>}
                         <div className={`max-w-xl p-4 rounded-2xl shadow-sm ${msg.sender === 'user' ? 'bg-yellow-400 text-gray-900 rounded-br-none' : 'bg-gray-100 text-gray-800 rounded-bl-none'}`}>
                             <p className="whitespace-pre-wrap">{msg.text}</p>
                         </div>
@@ -80,7 +80,7 @@ const EstudanteMasterPI: React.FC<EstudanteMasterPIProps> = ({ level }) => {
                 ))}
                 {isLoading && (
                      <div className="flex items-end gap-3">
-                        <img src={MasterPi} className="w-8 h-8 rounded-full flex-shrink-0"/>
+                        <img src={MasterPi} style={{ height: '32px' }} className="flex-shrink-0"/>
                         <div className="max-w-lg p-4 rounded-2xl bg-gray-100 text-gray-800 rounded-bl-none shadow-sm">
                             <Loader className="w-5 h-5 animate-spin text-gray-500" />
                         </div>

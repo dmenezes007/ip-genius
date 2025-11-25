@@ -117,6 +117,8 @@ const App: React.FC = () => {
   return (
     <Layout 
       onLogoClick={resetFlow}
+      role={role}
+      level={level}
       sidebarItems={(isOpen) => (
         <>{role === 'Teacher' ? teacherSidebar(isOpen) : studentSidebar(isOpen)}</>
     )}>

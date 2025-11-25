@@ -1,13 +1,22 @@
 import React, { useState, ReactNode } from 'react';
-import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
+import { ChevronLeft, Menu, User, GraduationCap } from 'lucide-react';
+import { UserRole, EducationLevel } from '../types';
+import { LEVELS } from '../data/ipContent';
 
 interface LayoutProps {
   children: ReactNode;
   sidebarItems: (isOpen: boolean) => ReactNode;
   onLogoClick: () => void;
+  role: UserRole;
+  level: EducationLevel;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, sidebarItems, onLogoClick }) => {
+const roleDisplay: Record<UserRole, string> = {
+  Teacher: 'Professor(a)',
+  Student: 'Estudante',
+};
+
+const Layout: React.FC<LayoutProps> = ({ children, sidebarItems, onLogoClick, role, level }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
@@ -36,8 +45,19 @@ const Layout: React.FC<LayoutProps> = ({ children, sidebarItems, onLogoClick }) 
 
       {/* Main Content */}
       <div className="flex flex-col flex-1">
-        <header className="flex items-center justify-end h-16 px-8 bg-white border-b">
-          {/* Header content can go here, e.g., user profile */}
+        <header className="flex items-center justify-between h-16 px-8 bg-white border-b">
+           {/* Empty div for spacing */}
+           <div></div>
+           <div className="flex items-center gap-6 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <User className="w-5 h-5 text-gray-400" />
+                <span className="font-medium">{roleDisplay[role]}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <GraduationCap className="w-5 h-5 text-gray-400" />
+                <span className="font-medium">{LEVELS[level]}</span>
+              </div>
+           </div>
         </header>
         <main className="flex-1 p-8 overflow-y-auto">
           {children}
@@ -58,20 +78,20 @@ export const SidebarItem: React.FC<{
     <li
       onClick={onClick}
       className={`
-        relative flex items-center py-3 px-6 my-2 font-medium rounded-md cursor-pointer
+        relative flex items-center h-12 py-3 mx-4 my-1 font-medium rounded-md cursor-pointer
         transition-colors group
         ${
           active
             ? 'bg-gradient-to-tr from-blue-200 to-blue-100 text-blue-800'
             : 'hover:bg-gray-100 text-gray-600'
         }
-        ${!isOpen && 'justify-center'}
+        ${isOpen ? 'px-6' : 'justify-center px-3'}
     `}
     >
-      {icon}
+      <div className="w-6 flex items-center justify-center">{icon}</div>
       <span
-        className={`overflow-hidden transition-all ${
-          isOpen ? 'w-32 ml-3' : 'w-0'
+        className={`overflow-hidden transition-all whitespace-nowrap ${
+          isOpen ? 'w-auto ml-3' : 'w-0'
         }`}
       >
         {text}
