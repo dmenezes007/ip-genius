@@ -1,8 +1,7 @@
-
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { EducationLevel, LessonPlan } from "../types";
 import { getDocumentsContext } from "@/src/docsContext";
@@ -15,7 +14,8 @@ const getAi = () => {
   return new GoogleGenerativeAI(apiKey);
 };
 
-const TEXT_MODEL = 'gemini-1.5-flash-001';
+// MUDANÇA: Usando o modelo 'gemini-pro' que é universalmente compatível
+const TEXT_MODEL = 'gemini-pro';
 
 export const generateLessonPlan = async (
   topic: string, 
@@ -23,9 +23,11 @@ export const generateLessonPlan = async (
 ): Promise<LessonPlan> => {
   
   const genAI = getAi();
-  const model = genAI.getGenerativeModel({
-    model: TEXT_MODEL,
-    systemInstruction: `
+  // No gemini-pro, não passamos systemInstruction aqui
+  const model = genAI.getGenerativeModel({ model: TEXT_MODEL });
+
+  // Inserimos a instrução no próprio prompt
+  const fullPrompt = `
       You are 'Master PI', an expert consultant in Intellectual Property Education for Brazilian schools (Base Nacional Comum Curricular - BNCC).
       Your task is to create a comprehensive Lesson Plan for the specified education level and topic.
       Level: ${level}.
@@ -40,14 +42,15 @@ export const generateLessonPlan = async (
         "activities": ["Detailed step-by-step activity 1", "Detailed step-by-step activity 2", "etc..."]
       }
       The language for the content must be Portuguese (Brazil).
-    `,
-  });
 
-  const result = await model.generateContent(`Topic: ${topic}`);
+      TOPIC TO GENERATE: ${topic}
+  `;
+
+  const result = await model.generateContent(fullPrompt);
   const response = result.response;
   const text = response.text() || "{}";
   try {
-    // Attempt to clean up potential markdown wrappers if the model doesn't follow instructions perfectly
+    // Limpeza de markdown caso o modelo insira
     const cleanedText = text.replace(/```json/g, '').replace(/```/g, '').trim();
     return JSON.parse(cleanedText) as LessonPlan;
   } catch (e) {
@@ -63,9 +66,11 @@ export const askMasterPI = async (
   const genAI = getAi();
   const context = await getDocumentsContext();
   
-  const model = genAI.getGenerativeModel({
-    model: TEXT_MODEL,
-    systemInstruction: `
+  const model = genAI.getGenerativeModel({ model: TEXT_MODEL });
+
+  // Combinamos instrução + contexto + pergunta do usuário em um texto só
+  const fullPrompt = `
+      INSTRUCTIONS:
       You are 'Master PI', a wise and fun mentor character for the 'IP Genius' program.
       The user is a student in level: ${level}.
       Your role is to answer their questions about Intellectual Property, Science, or Innovation, using the provided context.
@@ -79,10 +84,12 @@ export const askMasterPI = async (
       ---
       ${context}
       ---
-    `,
-  });
 
-  const result = await model.generateContent(question);
+      USER QUESTION:
+      ${question}
+  `;
+
+  const result = await model.generateContent(fullPrompt);
   const response = result.response;
   return response.text() || "Estou refletindo sobre sua pergunta... um momento.";
 };
@@ -115,19 +122,8 @@ export const generateInventionDescription = async (prompt: string): Promise<stri
 };
 
 export const generateInventionImage = async (prompt: string): Promise<string> => {
-  // O modelo 'gemini-1.5-flash' é de texto e não gera imagens (pixels) nativamente.
-  // Para evitar erros no build, retornamos uma imagem de placeholder dinâmica
-  // baseada no texto do prompt, ou uma imagem estática.
-  
+  // O modelo 'gemini-pro' é de texto e não gera imagens nativamente.
   console.log("Solicitação de imagem para:", prompt);
-
-  // Opção A: Retornar um placeholder simples para o build passar e a UI não quebrar
-  const encodedPrompt = encodeURIComponent(prompt.slice(0, 20)); // Pega o início do texto para a URL
+  const encodedPrompt = encodeURIComponent(prompt.slice(0, 20)); 
   return `https://placehold.co/600x400?text=Inveção:+${encodedPrompt}`;
-
-  /* NOTA: Se você quiser que o Gemini tente desenhar usando código SVG (já que ele é um modelo de texto),
-     você poderia usar uma implementação alternativa aqui solicitando SVG, 
-     mas isso requer que seu App.tsx saiba renderizar string SVG.
-     Por enquanto, o link acima é a solução mais segura para corrigir o erro.
-  */
 };
