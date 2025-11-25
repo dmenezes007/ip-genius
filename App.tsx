@@ -75,7 +75,7 @@ const App: React.FC = () => {
   };
 
   const teacherSidebar = (isOpen: boolean) => (
-    <ul>
+    <ul className="space-y-2">
       <SidebarItem icon={<Home />} text="Visão Geral" isOpen={isOpen} active={activeModule === 'home'} onClick={() => setActiveModule('home')} />
       <SidebarItem icon={<Book />} text="Metodologia" isOpen={isOpen} active={activeModule === 'metodologia'} onClick={() => setActiveModule('metodologia')} />
       <SidebarItem icon={<Users />} text="BNCC" isOpen={isOpen} active={activeModule === 'bncc'} onClick={() => setActiveModule('bncc')} />
@@ -85,7 +85,7 @@ const App: React.FC = () => {
   );
 
   const studentSidebar = (isOpen: boolean) => (
-     <ul>
+     <ul className="space-y-2">
       <SidebarItem icon={<Home />} text="Minha Jornada" isOpen={isOpen} active={activeModule === 'home'} onClick={() => setActiveModule('home')} />
       <SidebarItem icon={<Lightbulb />} text="Conceitos" isOpen={isOpen} active={activeModule === 'conceitos'} onClick={() => setActiveModule('conceitos')} />
       <SidebarItem icon={<Puzzle />} text="Jogos e Desafios" isOpen={isOpen} active={activeModule === 'jogos'} onClick={() => setActiveModule('jogos')} />
@@ -115,7 +115,9 @@ const App: React.FC = () => {
 
   // Main application layout
   return (
-    <Layout sidebarItems={(isOpen) => (
+    <Layout 
+      onLogoClick={resetFlow}
+      sidebarItems={(isOpen) => (
         <>{role === 'Teacher' ? teacherSidebar(isOpen) : studentSidebar(isOpen)}</>
     )}>
       {renderModule()}

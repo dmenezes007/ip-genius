@@ -4,9 +4,10 @@ import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 interface LayoutProps {
   children: ReactNode;
   sidebarItems: (isOpen: boolean) => ReactNode;
+  onLogoClick: () => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, sidebarItems }) => {
+const Layout: React.FC<LayoutProps> = ({ children, sidebarItems, onLogoClick }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
@@ -18,9 +19,11 @@ const Layout: React.FC<LayoutProps> = ({ children, sidebarItems }) => {
         }`}
       >
         <div className="flex items-center justify-between h-16 p-4 border-b">
-          <span className={`font-bold text-xl text-blue-600 ${!isSidebarOpen && 'hidden'}`}>
-            IP Genius
-          </span>
+          <button onClick={onLogoClick} className="flex items-center gap-2">
+            <span className={`font-bold text-xl text-blue-600 ${!isSidebarOpen && 'hidden'}`}>
+              IP Genius
+            </span>
+          </button>
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="p-2 rounded-full hover:bg-gray-100"
