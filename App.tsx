@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { EducationLevel, UserRole, LessonPlan } from './types';
-import { generateLessonPlan, askMasterPI } from './services/geminiService';
+// CORREÇÃO 1: Adicionada a importação de generateInventionImage
+import { generateLessonPlan, askMasterPI, generateInventionImage } from './services/geminiService';
 import IntroScreen from './components/IntroScreen';
 import ApiKeyModal from './components/ApiKeyModal';
 import LevelSelection from './components/LevelSelection';
@@ -18,6 +19,10 @@ const App: React.FC = () => {
   const [generatedPlan, setGeneratedPlan] = useState<LessonPlan | null>(null);
   const [chatResponse, setChatResponse] = useState<string>('');
   const [chatInput, setChatInput] = useState('');
+  
+  // CORREÇÃO 2: Adicionados os estados para a geração de imagem que estavam faltando
+  const [imagePrompt, setImagePrompt] = useState('');
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -55,6 +60,25 @@ const App: React.FC = () => {
     }
   };
 
+  // CORREÇÃO 3: Adicionada a função handleImageGen que estava faltando
+  const handleImageGen = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!imagePrompt.trim()) return;
+    
+    setIsLoading(true);
+    setGeneratedImage(null);
+    setError(null);
+    
+    try {
+      const imageUrl = await generateInventionImage(imagePrompt);
+      setGeneratedImage(imageUrl);
+    } catch (e: any) {
+      handleError(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleError = (err: any) => {
       console.error("An error occurred while calling the Gemini API:", JSON.stringify(err, null, 2));
 
@@ -85,7 +109,9 @@ const App: React.FC = () => {
     setActiveTab('home');
     setGeneratedPlan(null);
     setChatResponse('');
-
+    // Resetar também os estados da imagem ao reiniciar
+    setGeneratedImage(null);
+    setImagePrompt('');
     setError(null);
   };
 
@@ -115,6 +141,7 @@ const App: React.FC = () => {
       generatedPlan={generatedPlan}
       chatResponse={chatResponse}
       chatInput={chatInput}
+      // Agora estas variáveis existem!
       imagePrompt={imagePrompt}
       generatedImage={generatedImage}
       error={error}
