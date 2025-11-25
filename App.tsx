@@ -30,11 +30,11 @@ const App: React.FC = () => {
   }
 
   // Render the appropriate dashboard based on the selected role
-  if (role === 'Professor') {
+  if (role === 'Teacher') {
     return <ProfessorDashboard level={level} onReset={resetFlow} />;
   }
 
-  if (role === 'Estudante') {
+  if (role === 'Student') {
     return <EstudanteDashboard level={level} onReset={resetFlow} />;
   }
 
