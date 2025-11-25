@@ -15,7 +15,7 @@ const getAi = () => {
   return new GoogleGenerativeAI(apiKey);
 };
 
-const TEXT_MODEL = 'gemini-1.5-flash';
+const TEXT_MODEL = 'gemini-1.5-flash-001';
 
 export const generateLessonPlan = async (
   topic: string, 
