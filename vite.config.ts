@@ -27,26 +27,14 @@ export default defineConfig(() => {
           background_color: '#FFFFFF',
           display: 'standalone',
           orientation: 'portrait-primary',
-          scope: '/',
-          start_url: '/',
+          scope: '/ip-genius/',
+          start_url: '/ip-genius/',
           icons: [
             {
-              src: '/icon-192x192.png',
-              sizes: '192x192',
-              type: 'image/png',
+              src: '/ip-genius/icon.svg',
+              sizes: 'any',
+              type: 'image/svg+xml',
               purpose: 'any'
-            },
-            {
-              src: '/icon-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'any'
-            },
-            {
-              src: '/icon-512x512-maskable.png',
-              sizes: '512x512',
-              type: 'image/png',
-              purpose: 'maskable'
             }
           ]
         }
