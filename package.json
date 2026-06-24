@@ -1,8 +1,9 @@
 {
   "name": "app-ip-genius",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "homepage": "https://dmenezes007.github.io/ip-genius",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",
