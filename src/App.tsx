@@ -709,9 +709,10 @@ function LocalApp({
 
       {/* Aesthetic Workspace Branding Info for client review (Desktop only, hidden on mobile) */}
       <div className="hidden lg:flex w-[300px] flex-col gap-6 mr-12 shrink-0 text-slate-800">
-        <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">
-          Aura<span className="text-cyan-500">.</span>
-        </h1>
+        <div className="flex items-center gap-3">
+          <img src="/logo-ip-genius.png" alt="Logo IP Genius" className="w-11 h-11 rounded-lg object-contain bg-white border border-slate-200 p-1" />
+          <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">IP Genius</h1>
+        </div>
         <p className="text-slate-500 leading-relaxed text-sm">
           Protótipo de alta fidelidade para plataforma de engajamento gamificado.
         </p>
@@ -720,10 +721,10 @@ function LocalApp({
           <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Status Global</h3>
           <div className="flex items-center gap-4 mb-2">
             <div className="w-12 h-12 rounded-full turquoise-gradient flex items-center justify-center text-white font-bold text-lg shadow-sm">
-              AU
+              IP
             </div>
             <div>
-              <div className="text-base font-bold text-slate-800">Beta Testing v1.2</div>
+              <div className="text-base font-bold text-slate-800">IP Genius v1.0</div>
               <div className="text-xs text-cyan-600 font-semibold flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 bg-[#06B6D4] rounded-full animate-ping" />
                 <span>Online & Ativo</span>

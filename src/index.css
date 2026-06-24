@@ -1,50 +1,151 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.cdnfonts.com/css/rawline');
 @import "tailwindcss";
 
-@theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+:root {
+  --gov-blue: #1351b4;
+  --gov-blue-dark: #0c326f;
+  --gov-blue-strong: #071d41;
+  --gov-blue-soft: #edf5ff;
+  --gov-blue-light: #d4e5ff;
+  --gov-cyan: #00bde3;
+  --gov-gold: #ffcd07;
+  --accent-pink: #d82282;
+  --accent-cyan: #24a9db;
+  --accent-gold: #eec71e;
+  --gov-text: #1b1b1b;
+  --gov-muted: #555555;
+  --gov-border: #dfe1e2;
+  --gov-surface: #ffffff;
+  --gov-background: #f8f8f8;
 }
 
-/* Base custom interactive styles */
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: var(--font-sans);
-  background-color: #F1F5F9;
+  margin: 0;
+  font-family: 'Rawline', Raleway, sans-serif;
+  background: linear-gradient(180deg, #fcfcfc 0%, #f8f8f8 60%, #f1f4f8 100%);
+  color: var(--gov-text);
 }
 
-/* Turquoise Blue gradient from Vibrant Palette */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -8vh -6vw auto auto;
+  width: min(46vw, 34rem);
+  height: min(46vw, 34rem);
+  pointer-events: none;
+  opacity: 0.16;
+  background-image: radial-gradient(circle at 24% 24%, rgba(216, 34, 130, 0.5) 0, transparent 34%),
+    radial-gradient(circle at 72% 28%, rgba(36, 169, 219, 0.46) 0, transparent 36%),
+    radial-gradient(circle at 46% 74%, rgba(238, 199, 30, 0.4) 0, transparent 32%);
+  background-size: 18rem 18rem;
+  z-index: 0;
+}
+
+::selection {
+  background: var(--gov-blue);
+  color: #ffffff;
+}
+
+html,
+body,
+#root {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(36, 169, 219, 0.82) rgba(19, 81, 180, 0.08);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(180deg, rgba(19, 81, 180, 0.04), rgba(19, 81, 180, 0.08));
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(216, 34, 130, 0.92) 0%, rgba(36, 169, 219, 0.92) 52%, rgba(238, 199, 30, 0.92) 100%);
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.78);
+  background-clip: padding-box;
+}
+
 .turquoise-gradient {
-  background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+  background: linear-gradient(135deg, var(--gov-blue-dark), var(--gov-blue));
 }
 
 .turquoise-text {
-  color: #06B6D4;
+  color: var(--gov-blue);
 }
 
 .turquoise-border {
-  border-color: #06B6D4;
+  border-color: rgba(19, 81, 180, 0.35);
 }
 
 .turquoise-bg-light {
-  background-color: #ECFEFF;
+  background-color: var(--gov-blue-soft);
 }
 
-/* Hide scrollbars for true mobile feel while keeping native scrolling */
+/* Keep existing class names but remap cyan accents to gov palette. */
+.text-cyan-500,
+.text-cyan-600,
+.text-cyan-700,
+.text-cyan-800,
+.text-cyan-900 {
+  color: var(--gov-blue) !important;
+}
+
+.bg-cyan-500,
+.bg-cyan-600,
+.bg-cyan-700 {
+  background-color: var(--gov-blue) !important;
+}
+
+.border-cyan-500,
+.border-cyan-600,
+.focus\:ring-cyan-500:focus {
+  border-color: rgba(19, 81, 180, 0.38) !important;
+  --tw-ring-color: rgba(19, 81, 180, 0.3) !important;
+}
+
+.bg-\[\#06B6D4\] {
+  background: linear-gradient(135deg, var(--gov-blue-dark), var(--gov-blue)) !important;
+}
+
+.shadow-cyan-400,
+.shadow-cyan-500,
+.shadow-cyan-600 {
+  --tw-shadow-color: rgba(19, 81, 180, 0.35) !important;
+}
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* Pulse keyframes for shiny rewards */
 @keyframes reward-glow {
-  0%, 100% {
-    box-shadow: 0 0 12px 2px rgba(6, 182, 212, 0.4);
+  0%,
+  100% {
+    box-shadow: 0 0 12px 2px rgba(19, 81, 180, 0.35);
   }
+
   50% {
-    box-shadow: 0 0 24px 6px rgba(6, 182, 212, 0.7);
+    box-shadow: 0 0 24px 6px rgba(19, 81, 180, 0.6);
   }
 }
 

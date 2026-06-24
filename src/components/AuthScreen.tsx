@@ -31,7 +31,10 @@ export default function AuthScreen({ onSignIn, onSignUp, loading }: AuthScreenPr
   return (
     <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-200 p-6">
-        <h1 className="text-2xl font-black text-slate-900">Aura</h1>
+        <div className="flex items-center gap-3">
+          <img src="/logo-ip-genius.png" alt="Logo IP Genius" className="w-9 h-9 rounded-md object-contain" />
+          <h1 className="text-2xl font-black text-slate-900">IP Genius</h1>
+        </div>
         <p className="text-sm text-slate-500 mt-1">Acesso seguro para salvar progresso real na nuvem.</p>
 
         <div className="flex mt-5 bg-slate-100 p-1 rounded-xl">
