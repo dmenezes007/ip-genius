@@ -20,10 +20,10 @@ export default defineConfig(() => {
           maximumFileSizeToCacheInBytes: 5000000,
         },
         manifest: {
-          name: 'Aura - Progresso Gamificado',
-          short_name: 'Aura',
-          description: 'Uma plataforma móvel de evolução gamificada. Acompanhe suas metas, cumpra missões diárias, desbloqueia emblemas e lidera o ranking.',
-          theme_color: '#06B6D4',
+          name: 'IP Genius',
+          short_name: 'IP Genius',
+          description: 'IP Genius: plataforma móvel de evolução gamificada para metas, missões, emblemas e ranking.',
+          theme_color: '#1351b4',
           background_color: '#FFFFFF',
           display: 'standalone',
           orientation: 'portrait-primary',
@@ -31,10 +31,10 @@ export default defineConfig(() => {
           start_url: '/ip-genius/',
           icons: [
             {
-              src: '/ip-genius/icon.svg',
-              sizes: 'any',
-              type: 'image/svg+xml',
-              purpose: 'any'
+              src: '/ip-genius/logo-ip-genius.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable'
             }
           ]
         }

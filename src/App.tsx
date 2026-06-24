@@ -324,6 +324,8 @@ function LocalApp({
   syncError: string | null;
   onSignOut: () => void;
 }) {
+  const logoSrc = `${import.meta.env.BASE_URL}logo-ip-genius.png`;
+
   // Sync core systems with LocalStorage
   const [stats, setStats] = useState<UserStats>(() => {
     const cached = localStorage.getItem(STORAGE_KEYS.stats);
@@ -710,7 +712,7 @@ function LocalApp({
       {/* Aesthetic Workspace Branding Info for client review (Desktop only, hidden on mobile) */}
       <div className="hidden lg:flex w-[300px] flex-col gap-6 mr-12 shrink-0 text-slate-800">
         <div className="flex items-center gap-3">
-          <img src="/logo-ip-genius.png" alt="Logo IP Genius" className="w-11 h-11 rounded-lg object-contain bg-white border border-slate-200 p-1" />
+          <img src={logoSrc} alt="Logo IP Genius" className="w-11 h-11 rounded-lg object-contain bg-white border border-slate-200 p-1" />
           <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight">IP Genius</h1>
         </div>
         <p className="text-slate-500 leading-relaxed text-sm">
