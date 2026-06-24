@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import type { User } from '@supabase/supabase-js';
 import { UserStats, Mission, Badge, ActivityLog } from './types';
 import Dashboard from './components/Dashboard';
 import Missions from './components/Missions';
@@ -9,6 +10,22 @@ import Profile from './components/Profile';
 import Rewards from './components/Rewards';
 import ModalAchievement from './components/ModalAchievement';
 import AuraIcon from './components/AuraIcon';
+import AuthScreen from './components/AuthScreen';
+import { isCloudEnabled } from './lib/supabase';
+import {
+  STORAGE_KEYS,
+  clearLocalSnapshot,
+  getCurrentUser,
+  loadRemoteState,
+  onAuthChanged,
+  readLocalSnapshot,
+  saveRemoteState,
+  signIn,
+  signOut,
+  signUp,
+  writeLocalSnapshot,
+  type PersistedAuraState,
+} from './services/cloudState';
 
 // Mock Initial Data sets
 const INITIAL_STATS: UserStats = {
@@ -63,32 +80,221 @@ const INITIAL_ACTIVITIES: ActivityLog[] = [
 
 type AppTab = 'inicio' | 'missoes' | 'ranking' | 'emblemas' | 'perfil' | 'recompensas';
 
+function buildInitialSnapshot(): PersistedAuraState {
+  return {
+    aura_user_stats: INITIAL_STATS,
+    aura_missions: INITIAL_MISSIONS,
+    aura_badges: INITIAL_BADGES,
+    aura_rewards: INITIAL_REWARDS,
+    aura_activities: INITIAL_ACTIVITIES,
+  };
+}
+
+function hasCompleteSnapshot(snapshot: PersistedAuraState | null): snapshot is PersistedAuraState {
+  if (!snapshot) return false;
+  return (
+    snapshot.aura_user_stats !== null &&
+    snapshot.aura_missions !== null &&
+    snapshot.aura_badges !== null &&
+    snapshot.aura_rewards !== null &&
+    snapshot.aura_activities !== null
+  );
+}
+
 export default function App() {
+  const [authUser, setAuthUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(!isCloudEnabled);
+  const [bootstrapped, setBootstrapped] = useState(!isCloudEnabled);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [appVersion, setAppVersion] = useState(0);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const lastSavedSnapshotRef = useRef('');
+
+  useEffect(() => {
+    if (!isCloudEnabled) return;
+
+    let alive = true;
+    getCurrentUser()
+      .then((user) => {
+        if (!alive) return;
+        setAuthUser(user);
+        setAuthReady(true);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setAuthReady(true);
+      });
+
+    const subscription = onAuthChanged((user) => {
+      setAuthUser(user);
+      setBootstrapped(false);
+    });
+
+    return () => {
+      alive = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isCloudEnabled) return;
+    if (!authReady) return;
+    if (!authUser) {
+      setBootstrapped(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const bootstrap = async () => {
+      try {
+        const remote = await loadRemoteState(authUser.id);
+        if (cancelled) return;
+
+        if (hasCompleteSnapshot(remote)) {
+          writeLocalSnapshot(remote);
+        } else {
+          const local = readLocalSnapshot();
+          if (hasCompleteSnapshot(local)) {
+            await saveRemoteState(authUser.id, local);
+          } else {
+            const initial = buildInitialSnapshot();
+            writeLocalSnapshot(initial);
+            await saveRemoteState(authUser.id, initial);
+          }
+        }
+
+        lastSavedSnapshotRef.current = JSON.stringify(readLocalSnapshot());
+        setAppVersion((prev) => prev + 1);
+        setBootstrapped(true);
+        setSyncError(null);
+      } catch {
+        if (cancelled) return;
+        setSyncError('Não foi possível sincronizar seus dados em nuvem.');
+        setBootstrapped(true);
+      }
+    };
+
+    bootstrap();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authReady, authUser]);
+
+  useEffect(() => {
+    if (!isCloudEnabled || !authUser || !bootstrapped) return;
+
+    const syncTimer = setInterval(async () => {
+      const snapshot = readLocalSnapshot();
+      if (!hasCompleteSnapshot(snapshot)) return;
+
+      const serialized = JSON.stringify(snapshot);
+      if (serialized === lastSavedSnapshotRef.current) return;
+
+      try {
+        await saveRemoteState(authUser.id, snapshot);
+        lastSavedSnapshotRef.current = serialized;
+        setSyncError(null);
+      } catch {
+        setSyncError('Falha ao salvar alterações em nuvem. Tentaremos novamente.');
+      }
+    }, 2500);
+
+    return () => clearInterval(syncTimer);
+  }, [authUser, bootstrapped]);
+
+  const handleSignIn = async (email: string, password: string) => {
+    setAuthLoading(true);
+    try {
+      await signIn(email, password);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleSignUp = async (email: string, password: string) => {
+    setAuthLoading(true);
+    try {
+      await signUp(email, password);
+      await signIn(email, password);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    clearLocalSnapshot();
+    setAuthUser(null);
+    setBootstrapped(false);
+  };
+
+  if (isCloudEnabled && !authReady) {
+    return <div className="min-h-screen bg-slate-100 flex items-center justify-center text-slate-600 font-semibold">Preparando autenticação...</div>;
+  }
+
+  if (isCloudEnabled && authReady && !authUser) {
+    return <AuthScreen onSignIn={handleSignIn} onSignUp={handleSignUp} loading={authLoading} />;
+  }
+
+  if (isCloudEnabled && !bootstrapped) {
+    return <div className="min-h-screen bg-slate-100 flex items-center justify-center text-slate-600 font-semibold">Sincronizando seus dados...</div>;
+  }
+
+  return <LocalApp snapshotVersion={appVersion} cloudMode={isCloudEnabled} syncError={syncError} onSignOut={handleSignOut} />;
+}
+
+function LocalApp({
+  snapshotVersion,
+  cloudMode,
+  syncError,
+  onSignOut,
+}: {
+  snapshotVersion: number;
+  cloudMode: boolean;
+  syncError: string | null;
+  onSignOut: () => void;
+}) {
   // Sync core systems with LocalStorage
   const [stats, setStats] = useState<UserStats>(() => {
-    const cached = localStorage.getItem('aura_user_stats');
+    const cached = localStorage.getItem(STORAGE_KEYS.stats);
     return cached ? JSON.parse(cached) : INITIAL_STATS;
   });
 
   const [missions, setMissions] = useState<Mission[]>(() => {
-    const cached = localStorage.getItem('aura_missions');
+    const cached = localStorage.getItem(STORAGE_KEYS.missions);
     return cached ? JSON.parse(cached) : INITIAL_MISSIONS;
   });
 
   const [badges, setBadges] = useState<Badge[]>(() => {
-    const cached = localStorage.getItem('aura_badges');
+    const cached = localStorage.getItem(STORAGE_KEYS.badges);
     return cached ? JSON.parse(cached) : INITIAL_BADGES;
   });
 
   const [rewards, setRewards] = useState(() => {
-    const cached = localStorage.getItem('aura_rewards');
+    const cached = localStorage.getItem(STORAGE_KEYS.rewards);
     return cached ? JSON.parse(cached) : INITIAL_REWARDS;
   });
 
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>(() => {
-    const cached = localStorage.getItem('aura_activities');
+    const cached = localStorage.getItem(STORAGE_KEYS.activities);
     return cached ? JSON.parse(cached) : INITIAL_ACTIVITIES;
   });
+
+  useEffect(() => {
+    const cachedStats = localStorage.getItem(STORAGE_KEYS.stats);
+    const cachedMissions = localStorage.getItem(STORAGE_KEYS.missions);
+    const cachedBadges = localStorage.getItem(STORAGE_KEYS.badges);
+    const cachedRewards = localStorage.getItem(STORAGE_KEYS.rewards);
+    const cachedActivities = localStorage.getItem(STORAGE_KEYS.activities);
+
+    setStats(cachedStats ? JSON.parse(cachedStats) : INITIAL_STATS);
+    setMissions(cachedMissions ? JSON.parse(cachedMissions) : INITIAL_MISSIONS);
+    setBadges(cachedBadges ? JSON.parse(cachedBadges) : INITIAL_BADGES);
+    setRewards(cachedRewards ? JSON.parse(cachedRewards) : INITIAL_REWARDS);
+    setActivityLogs(cachedActivities ? JSON.parse(cachedActivities) : INITIAL_ACTIVITIES);
+  }, [snapshotVersion]);
 
   // Navigation states
   const [activeTab, setActiveTab] = useState<AppTab>('inicio');
@@ -118,23 +324,23 @@ export default function App() {
 
   // Write changes back to localStorage
   useEffect(() => {
-    localStorage.setItem('aura_user_stats', JSON.stringify(stats));
+    localStorage.setItem(STORAGE_KEYS.stats, JSON.stringify(stats));
   }, [stats]);
 
   useEffect(() => {
-    localStorage.setItem('aura_missions', JSON.stringify(missions));
+    localStorage.setItem(STORAGE_KEYS.missions, JSON.stringify(missions));
   }, [missions]);
 
   useEffect(() => {
-    localStorage.setItem('aura_badges', JSON.stringify(badges));
+    localStorage.setItem(STORAGE_KEYS.badges, JSON.stringify(badges));
   }, [badges]);
 
   useEffect(() => {
-    localStorage.setItem('aura_rewards', JSON.stringify(rewards));
+    localStorage.setItem(STORAGE_KEYS.rewards, JSON.stringify(rewards));
   }, [rewards]);
 
   useEffect(() => {
-    localStorage.setItem('aura_activities', JSON.stringify(activityLogs));
+    localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(activityLogs));
   }, [activityLogs]);
 
   // Method to insert a new activity log
@@ -348,11 +554,11 @@ export default function App() {
 
   // Clear states to start fresh for demo presentation
   const handleResetDemodata = () => {
-    localStorage.removeItem('aura_user_stats');
-    localStorage.removeItem('aura_missions');
-    localStorage.removeItem('aura_badges');
-    localStorage.removeItem('aura_rewards');
-    localStorage.removeItem('aura_activities');
+    localStorage.removeItem(STORAGE_KEYS.stats);
+    localStorage.removeItem(STORAGE_KEYS.missions);
+    localStorage.removeItem(STORAGE_KEYS.badges);
+    localStorage.removeItem(STORAGE_KEYS.rewards);
+    localStorage.removeItem(STORAGE_KEYS.activities);
     setStats(INITIAL_STATS);
     setMissions(INITIAL_MISSIONS);
     setBadges(INITIAL_BADGES);
@@ -418,6 +624,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F1F5F9] flex flex-col lg:flex-row items-center justify-center p-0 lg:p-6 select-none font-sans antialiased overflow-x-hidden relative">
+      {cloudMode && (
+        <button
+          onClick={onSignOut}
+          className="absolute top-4 right-4 z-40 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm"
+        >
+          Sair
+        </button>
+      )}
+
+      {syncError && (
+        <div className="absolute top-4 left-4 z-40 bg-amber-50 border border-amber-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-amber-700 shadow-sm">
+          {syncError}
+        </div>
+      )}
 
       {/* Aesthetic Workspace Branding Info for client review (Desktop only, hidden on mobile) */}
       <div className="hidden lg:flex w-[300px] flex-col gap-6 mr-12 shrink-0 text-slate-800">

@@ -46,6 +46,8 @@ npm run clean      # Limpa arquivos de build
 - ✅ **Ranking em Tempo Real**: Compita com outros usuários
 - ✅ **Emblemas Desbloqueáveis**: Conquiste troféus digitais
 - ✅ **Loja de Recompensas**: Resgate XP por vouchers
+- ✅ **Autenticação Real**: Login/cadastro com email e senha
+- ✅ **Persistência em Nuvem**: Dados sincronizados por usuário (Supabase)
 - ✅ **Progressive Web App (PWA)**: Instale em qualquer dispositivo
 - ✅ **Offline-First**: Funciona sem conexão com sincronização automática
 - ✅ **Totalmente Responsivo**: Mobile, tablet e desktop
@@ -84,8 +86,9 @@ Para publicar em produção, consulte [PUBLICACAO.md](PUBLICACAO.md) para:
 - **Build**: Vite 6, VitePWA
 - **Animações**: Motion (Framer Motion)
 - **Ícones**: Lucide React
-- **Estado**: React Hooks + LocalStorage
+- **Estado**: React Hooks + LocalStorage + Sync em Supabase
 - **Tipos**: TypeScript 5.8+
+- **Backend Gerenciado**: Supabase Auth + Postgres
 
 ## 📋 Estrutura do Projeto
 
@@ -150,7 +153,9 @@ Cópia `.env.local.example` para `.env.local` e customize conforme necessário:
 
 ```bash
 NODE_ENV=production
-# VITE_APP_URL=https://seu-dominio.com/app-ip-genius
+VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
+VITE_SUPABASE_ANON_KEY=SUA_CHAVE_PUBLICA_ANON
+# VITE_APP_URL=https://dmenezes007.github.io/ip-genius
 ```
 
 ## 📄 Licença

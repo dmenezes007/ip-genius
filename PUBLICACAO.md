@@ -13,6 +13,58 @@ Uma plataforma móvel de evolução gamificada, onde você acompanha suas metas,
 - 🎁 **Loja de Recompensas**: Resgate XP por vouchers e prêmios exclusivos
 - 📱 **Modo Offline**: Funciona offline com sincronização automática
 
+## 🚨 Lançar Hoje em Produção Real (Passo a Passo)
+
+Esta versão já suporta autenticação real e persistência em nuvem via Supabase.
+
+### 1. Criar backend gerenciado (Supabase)
+
+1. Crie um projeto em https://supabase.com
+2. Em SQL Editor, execute o arquivo `supabase/schema.sql`
+3. Em Authentication > Providers, habilite Email
+
+### 2. Configurar variáveis de ambiente
+
+Crie `.env.local` com:
+
+```bash
+VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
+VITE_SUPABASE_ANON_KEY=SUA_CHAVE_PUBLICA_ANON
+```
+
+Em produção (GitHub Pages), configure os mesmos valores como Repository Secrets:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+### 3. Garantir injeção no build do GitHub Actions
+
+No workflow de deploy, adicione em `Build`:
+
+```yaml
+env:
+  VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+  VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+```
+
+### 4. Publicar
+
+```bash
+npm install
+npm run typecheck
+npm run build
+git add .
+git commit -m "feat: produção real com autenticação e nuvem"
+git push origin main
+```
+
+### 5. Testar fluxo real
+
+1. Abra o app em produção
+2. Crie conta com email/senha
+3. Faça login em dois dispositivos
+4. Confirme sincronização de progresso entre sessões
+
 ## 🚀 Início Rápido
 
 ### Instalação Local
