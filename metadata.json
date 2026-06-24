@@ -1,0 +1,12 @@
+{
+  "name": "Aura - Progresso Gamificado",
+  "description": "Uma plataforma móvel e moderna de evolução gamificada, onde você acompanha suas metas, cumpre missões diárias, desbloqueia emblemas e lidera o ranking. Disponível como Progressive Web App (PWA) instalável em qualquer dispositivo.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [],
+  "version": "1.0.0",
+  "author": "Aura Team",
+  "repository": "https://github.com/seu-usuario/app-ip-genius",
+  "license": "MIT",
+  "keywords": ["gamificação", "missões", "ranking", "emblemas", "progresso", "mobile", "pwa"],
+  "categories": ["productivity", "games"]
+}
