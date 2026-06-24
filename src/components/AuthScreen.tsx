@@ -33,7 +33,7 @@ export default function AuthScreen({ onSignIn, onSignUp, loading }: AuthScreenPr
     <div className="min-h-screen bg-slate-100 flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-200 p-6">
         <div className="w-full">
-          <img src={logoSrc} alt="Logo IP Genius" className="w-full h-9 rounded-md object-contain" />
+          <img src={logoSrc} alt="Logo IP Genius" className="w-full h-9 rounded-md object-contain" style={{ height: '100%' }} />
           <h1
             className="text-2xl font-black text-slate-900 mt-3 text-center bg-clip-text text-transparent"
             style={{ backgroundImage: 'linear-gradient(135deg,var(--gov-blue-dark),var(--gov-blue))' }}
