@@ -80,13 +80,77 @@ const INITIAL_ACTIVITIES: ActivityLog[] = [
 
 type AppTab = 'inicio' | 'missoes' | 'ranking' | 'emblemas' | 'perfil' | 'recompensas';
 
-function buildInitialSnapshot(): PersistedAuraState {
+function getDisplayNameFromUser(user: User | null): string {
+  if (!user) return 'Novo Usuario';
+
+  const metadataName =
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    user.user_metadata?.display_name;
+
+  if (typeof metadataName === 'string' && metadataName.trim().length > 0) {
+    return metadataName.trim();
+  }
+
+  const emailPrefix = user.email?.split('@')[0]?.replace(/[._-]+/g, ' ');
+  if (emailPrefix && emailPrefix.trim().length > 0) {
+    return emailPrefix
+      .split(' ')
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }
+
+  return 'Novo Usuario';
+}
+
+function buildInitialSnapshot(user: User | null): PersistedAuraState {
+  const baseMissions = INITIAL_MISSIONS.map((mission) => ({
+    ...mission,
+    progress: 0,
+    status: 'pendente' as const,
+  }));
+
+  const baseBadges = INITIAL_BADGES.map((badge) => ({
+    ...badge,
+    unlocked: false,
+    dateUnlocked: undefined,
+  }));
+
+  const personalizedStats: UserStats = {
+    ...INITIAL_STATS,
+    name: getDisplayNameFromUser(user),
+    email: user?.email ?? '',
+    level: 1,
+    xp: 0,
+    completedMissions: 0,
+    rankPos: 0,
+    streak: 0,
+    totalBadges: 0,
+  };
+
   return {
-    aura_user_stats: INITIAL_STATS,
-    aura_missions: INITIAL_MISSIONS,
-    aura_badges: INITIAL_BADGES,
-    aura_rewards: INITIAL_REWARDS,
-    aura_activities: INITIAL_ACTIVITIES,
+    aura_user_stats: personalizedStats,
+    aura_missions: baseMissions,
+    aura_badges: baseBadges,
+    aura_rewards: INITIAL_REWARDS.map((reward) => ({ ...reward, claimed: false })),
+    aura_activities: [],
+  };
+}
+
+function applyUserIdentity(snapshot: PersistedAuraState, user: User | null): PersistedAuraState {
+  const currentStats = snapshot.aura_user_stats as UserStats | null;
+  if (!currentStats || !user) return snapshot;
+
+  const nextStats: UserStats = {
+    ...currentStats,
+    name: getDisplayNameFromUser(user),
+    email: user.email ?? currentStats.email,
+  };
+
+  return {
+    ...snapshot,
+    aura_user_stats: nextStats,
   };
 }
 
@@ -152,13 +216,17 @@ export default function App() {
         if (cancelled) return;
 
         if (hasCompleteSnapshot(remote)) {
-          writeLocalSnapshot(remote);
+          const normalizedRemote = applyUserIdentity(remote, authUser);
+          writeLocalSnapshot(normalizedRemote);
+          await saveRemoteState(authUser.id, normalizedRemote);
         } else {
           const local = readLocalSnapshot();
           if (hasCompleteSnapshot(local)) {
-            await saveRemoteState(authUser.id, local);
+            const normalizedLocal = applyUserIdentity(local, authUser);
+            writeLocalSnapshot(normalizedLocal);
+            await saveRemoteState(authUser.id, normalizedLocal);
           } else {
-            const initial = buildInitialSnapshot();
+            const initial = buildInitialSnapshot(authUser);
             writeLocalSnapshot(initial);
             await saveRemoteState(authUser.id, initial);
           }
